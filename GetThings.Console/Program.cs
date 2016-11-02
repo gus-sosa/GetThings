@@ -1,6 +1,5 @@
 ﻿namespace GetThings.Downloader
 {
-    using Arguments;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -9,36 +8,49 @@
     using Microsoft.Practices.Unity;
     using Infrastructure;
     using Infrastructure.Ioc;
+    using CommandLine;
+    using CommandLine.Text;
 
     class Program
     {
+        class Input
+        {
+            [Option('u', "username", HelpText = "Username for login", DefaultValue = "")]
+            public string Username { get; set; }
+
+            [Option('p', "password", HelpText = "Password for login", DefaultValue = "")]
+            public string Password { get; set; }
+
+            [Option('d', "pathDirectory", HelpText = "Directory where the resources will be downloaded")]
+            public string PathDirectory { get; set; } = AppDomain.CurrentDomain.BaseDirectory;
+
+            [Option('t', "pathTempDirectory", HelpText = "Temp Directory. This should be a place where the application can create files.")]
+            public string PathTempDirectory { get; set; } = AppDomain.CurrentDomain.BaseDirectory;
+
+            [Option('i', "DirFileInput", HelpText = "The path of the input file")]
+            public string DirFileInput { get; set; } = AppDomain.CurrentDomain.BaseDirectory + "\\input.txt";
+
+            [Option('r', "retry", HelpText = "Number of times for trying to download a resource.", DefaultValue = 10)]
+            public int Retry { get; set; }
+
+            [ParserState]
+            public IParserState ParserState { get; set; }
+
+            [HelpOption]
+            public string GetUsage()
+            {
+                return HelpText.AutoBuild(this, (HelpText current) => HelpText.DefaultParsingErrorsHandler(this, current));
+            }
+        }
+
         static void Main(string[] args)
         {
-            string username = "";
-            string password = "";
-            string pathDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string pathTempDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string dirFileInput = AppDomain.CurrentDomain.BaseDirectory + "\\input.txt";
-            int retry = 10;
             IEnumerable<IDownloader> downloaders = IoC.Container.ResolveAll<IDownloader>();
             IEnumerable<INotifier> notifiers = IoC.Container.ResolveAll<INotifier>();
+            var input = new Input();
+            Parser.Default.ParseArguments(args, input);
 
-            var processedArguments = ArgumentProcessor.Initialize(args)
-                 .AddArgument(nameof(username))
-                     .WithAction(parameter => username = parameter)
-                 .AddArgument(nameof(password))
-                     .WithAction(parameter => password = parameter)
-                 .AddArgument(nameof(pathDirectory))
-                     .WithAction(parameter => pathDirectory = parameter)
-                 .AddArgument(nameof(pathTempDirectory))
-                     .WithAction(parameter => pathTempDirectory = parameter)
-                 .AddArgument(nameof(dirFileInput))
-                     .WithAction(parameter => dirFileInput = parameter)
-                 .AddArgument(nameof(retry))
-                     .WithAction(parameter => retry = int.Parse(parameter))
-                 .Process();
-
-            using (var stream = new StreamReader(dirFileInput))
+            using (var stream = new StreamReader(input.DirFileInput))
                 while (true)
                 {
                     var resource = stream.ReadLine();
@@ -54,15 +66,15 @@
 
                     var info = new BaseInfo()
                     {
-                        Username = username,
-                        Password = password,
-                        PathDirectory = pathDirectory,
-                        PathTempDirectory = pathTempDirectory,
-                        DirFileInput = dirFileInput,
+                        Username = input.Username,
+                        Password = input.Password,
+                        PathDirectory = input.PathDirectory,
+                        PathTempDirectory = input.PathTempDirectory,
+                        DirFileInput = input.DirFileInput,
                         Resource = resource
                     };
                     bool flag = false;
-                    for (int i = 0; !flag && i < retry; i++)
+                    for (int i = 0; !flag && i < input.Retry; i++)
                         flag = downloader.Download(resource, info);
 
                     foreach (var notifier in notifiers)
