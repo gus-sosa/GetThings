@@ -57,8 +57,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseInfo.cs" />
+    <Compile Include="IContainer.cs" />
     <Compile Include="IDownloader.cs" />
     <Compile Include="INotifier.cs" />
+    <Compile Include="IoC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

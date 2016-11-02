@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Practices.Unity;
 
 namespace GetThings.Downloader
 {
@@ -19,9 +20,8 @@ namespace GetThings.Downloader
             string pathTempDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string dirFileInput = AppDomain.CurrentDomain.BaseDirectory + "\\input.txt";
             int retry = 10;
-            IEnumerable<IDownloader> downloaders = null;
-            IEnumerable<INotifier> notifiers = null;
-
+            IEnumerable<IDownloader> downloaders = IoC.Container.ResolveAll<IDownloader>();
+            IEnumerable<INotifier> notifiers = IoC.Container.ResolveAll<INotifier>();
 
             var processedArguments = ArgumentProcessor.Initialize(args)
                  .AddArgument(nameof(username))
