@@ -1,6 +1,8 @@
 ﻿namespace GetThings.Infrastructure.Ioc
 {
+    using Downloader;
     using Microsoft.Practices.Unity;
+    using Notifier;
     using System;
 
     public class IoC
@@ -15,6 +17,8 @@
         private static void InitializeContainer(UnityContainer container)
         {
 #if DEBUG
+            container.RegisterType<IDownloader, PluralsightDownloader>("pluralsight-downloader", new ContainerControlledLifetimeManager())
+                     .RegisterType<INotifier, EmailNotifier>("emailnotifier", new ContainerControlledLifetimeManager());
 #else
 #endif
         }
