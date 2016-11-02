@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using WinSCP;
 
 namespace GetThings.Notifier
 {
@@ -17,7 +19,7 @@ namespace GetThings.Notifier
         {
             public string RemoteDir { get; set; }
 
-            public int SizeZip { get; set; }
+            public long SizeZip { get; set; }
         }
 
         private static object lockFlag = new object();
@@ -29,7 +31,7 @@ namespace GetThings.Notifier
 
             RemoteDirInfo remoteDir = null;
             lock (lockFlag)
-                remoteDir = SendCourse();
+                remoteDir = SendCourse(info);
 
             string idResource = GetId(info.Resource);
             long sizeDirectory = new DirectoryInfo($"info.Password\\{idResource}").EnumerateFiles("*", SearchOption.AllDirectories).Sum(f => f.Length);
@@ -56,9 +58,55 @@ namespace GetThings.Notifier
             }
         }
 
-        private RemoteDirInfo SendCourse()
+        private RemoteDirInfo SendCourse(BaseInfo info)
         {
-            throw new NotImplementedException();
+            var remoteDir = ConfigurationSettings.AppSettings["REMOTE-DIR"];
+            var result = new RemoteDirInfo()
+            {
+                RemoteDir = $"{remoteDir}\\{GetId(info.Resource)}"
+            };
+
+            var destinationFileName = $"{info.PathTempDirectory}\\{GetId(info.Resource)}.zip";
+            ZipFile.CreateFromDirectory($"{info.PathDirectory}\\{GetId(info.Resource)}", destinationFileName);
+            result.SizeZip = new FileInfo(destinationFileName).Length;
+
+            int retry = int.Parse(ConfigurationSettings.AppSettings["NUMBER-RETRY"]);
+            for (int i = 0; i < retry; i++)
+            {
+                try
+                {
+                    // Setup session options
+                    var sessionOptions = new SessionOptions
+                    {
+                        Protocol = Protocol.Sftp,
+                        HostName = ConfigurationSettings.AppSettings["HOST-SFTP"],
+                        UserName = ConfigurationSettings.AppSettings["USER-SFTP"],
+                        Password = ConfigurationSettings.AppSettings["PASSWORD-SFTP"],
+                        SshHostKeyFingerprint = ConfigurationSettings.AppSettings["KEY-SFTP"]
+                    };
+
+                    using (Session session = new Session())
+                    {
+                        // Connect
+                        session.Open(sessionOptions);
+
+                        // Upload files
+                        var transferOptions = new TransferOptions();
+                        transferOptions.TransferMode = TransferMode.Binary;
+
+                        TransferOperationResult transferResult = session.PutFiles(destinationFileName, remoteDir, false, transferOptions);
+
+                        // Throw on any error
+                        transferResult.Check();
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+
+            return result;
         }
 
         private string GetId(string resource)
