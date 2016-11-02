@@ -59,13 +59,14 @@
         private RemoteDirInfo SendCourse(BaseInfo info)
         {
             var remoteDir = ConfigurationSettings.AppSettings["REMOTE-DIR"];
+            var idResource = GetId(info.Resource);
             var result = new RemoteDirInfo()
             {
                 RemoteDir = $"{remoteDir}\\{GetId(info.Resource)}"
             };
 
-            var destinationFileName = $"{info.PathTempDirectory}\\{GetId(info.Resource)}.zip";
-            ZipFile.CreateFromDirectory($"{info.PathDirectory}\\{GetId(info.Resource)}", destinationFileName);
+            var destinationFileName = $"{info.PathTempDirectory}\\{idResource}.zip";
+            ZipFile.CreateFromDirectory($"{info.PathDirectory}\\{idResource}", destinationFileName);
             result.SizeZip = new FileInfo(destinationFileName).Length;
 
             int retry = int.Parse(ConfigurationSettings.AppSettings["NUMBER-RETRY"]);
