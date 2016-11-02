@@ -18,8 +18,23 @@ namespace GetThins.Infrastructure
 
         private static void InitializeContainer(UnityContainer container)
         {
+#if DEBUG
+#else
+#endif
         }
 
-        public static IUnityContainer Container { get; set; }
+        private static IUnityContainer _container = null;
+        public static IUnityContainer Container
+        {
+            get
+            {
+                if (_container != null)
+                    return _container;
+
+                _container = new UnityContainer();
+                InitializeContainer(_container as UnityContainer);
+                return _container;
+            }
+        }
     }
 }
