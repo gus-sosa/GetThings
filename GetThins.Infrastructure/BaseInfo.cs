@@ -1,4 +1,4 @@
-﻿namespace GetThins.Infrastructure
+﻿namespace GetThings.Infrastructure
 {
     public class BaseInfo
     {

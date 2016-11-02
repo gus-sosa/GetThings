@@ -1,6 +1,6 @@
 ﻿namespace GetThings.Downloader
 {
-    using GetThins.Infrastructure;
+    using Infrastructure;
     using System;
     using System.Diagnostics;
 

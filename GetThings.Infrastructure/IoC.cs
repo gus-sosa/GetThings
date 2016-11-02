@@ -1,4 +1,4 @@
-﻿namespace GetThins.Infrastructure
+﻿namespace GetThings.Infrastructure.Ioc
 {
     using Microsoft.Practices.Unity;
     using System;

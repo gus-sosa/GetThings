@@ -1,6 +1,6 @@
 ﻿namespace GetThings.Notifier
 {
-    using GetThins.Infrastructure;
+    using Infrastructure;
     using System;
     using System.Configuration;
     using System.IO;
@@ -9,6 +9,7 @@
     using System.Net;
     using System.Net.Mail;
     using System.Threading.Tasks;
+    using WinSCP;
 
     public class EmailNotifier : INotifier
     {
