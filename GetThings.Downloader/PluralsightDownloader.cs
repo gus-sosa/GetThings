@@ -3,6 +3,7 @@
     using Infrastructure;
     using System;
     using System.Diagnostics;
+    using System.IO;
 
     public class PluralsightDownloader : IDownloader
     {
@@ -24,10 +25,10 @@
 
             var process = new Process()
             {
-                StartInfo=new ProcessStartInfo()
+                StartInfo = new ProcessStartInfo()
                 {
-                    Arguments=$"/C pd download {idResource}",
-                    FileName="cmd.exe"
+                    Arguments = $"/C pd download {idResource}",
+                    FileName = "cmd.exe"
                 }
             };
 
@@ -46,12 +47,16 @@
 
         private void ConfigEnvironment(BaseInfo info)
         {
+            var pathDir = $"{ info.PathDirectory }{ GetId(info.Resource)}";
+            if (!Directory.Exists(pathDir))
+                Directory.CreateDirectory(pathDir);
+
             var procces = new Process()
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    Arguments = $"/C pd config -u {info.Username} -p {info.Password} -s \"{info.PathDirectory}\"",
-                    FileName="cmd.exe"
+                    Arguments = $"/C pd config -u {info.Username} -p {info.Password} -s {pathDir}",
+                    FileName = "cmd.exe"
                 }
             };
 

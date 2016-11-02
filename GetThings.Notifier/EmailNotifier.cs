@@ -32,14 +32,14 @@
                 remoteDir = SendCourse(info);
 
             string idResource = GetId(info.Resource);
-            long sizeDirectory = new DirectoryInfo($"info.Password\\{idResource}").EnumerateFiles("*", SearchOption.AllDirectories).Sum(f => f.Length);
+            long sizeDirectory = new DirectoryInfo($"{info.PathDirectory}{idResource}").EnumerateFiles("*", SearchOption.AllDirectories).Sum(f => f.Length);
             string smtpHost = ConfigurationSettings.AppSettings["SMTP-HOST"];
             int smtpPort = int.Parse(ConfigurationSettings.AppSettings["SMTP-PORT"]);
             var fromAddress = new MailAddress(ConfigurationSettings.AppSettings["FROM-EMAIL"], ConfigurationSettings.AppSettings["FROM-NAME"]);
             var toAddress = new MailAddress(ConfigurationSettings.AppSettings["TO-EMAIL"], ConfigurationSettings.AppSettings["TO-NAME"]);
             string fromPassword = ConfigurationSettings.AppSettings["FROM-PASSWORD"];
             string subject = "Curso de Pluralsight descargado";
-            string body = $"Ya te mandé el curso {idResource}. Se lleva {sizeDirectory}. Te lo mandé en un zip que se lleva {remoteDir.SizeZip}. Eso está en {remoteDir.RemoteDir}.";
+            string body = $"Ya te mandé el curso {idResource}. Se lleva {sizeDirectory} bytes. Te lo mandé en un zip que se lleva {remoteDir.SizeZip} bytes. Eso está en {remoteDir.RemoteDir}. El fichero es un ZIP.";
 
             using (var smtp = new SmtpClient()
             {
@@ -65,8 +65,10 @@
                 RemoteDir = $"{remoteDir}\\{GetId(info.Resource)}"
             };
 
-            var destinationFileName = $"{info.PathTempDirectory}\\{idResource}.zip";
-            ZipFile.CreateFromDirectory($"{info.PathDirectory}\\{idResource}", destinationFileName);
+            var destinationFileName = $"{info.PathTempDirectory}{idResource}.zip";
+            if (File.Exists(destinationFileName))
+                File.Delete(destinationFileName);
+            ZipFile.CreateFromDirectory($"{info.PathDirectory}{idResource}", destinationFileName, CompressionLevel.Optimal, false);
             result.SizeZip = new FileInfo(destinationFileName).Length;
 
             int retry = int.Parse(ConfigurationSettings.AppSettings["NUMBER-RETRY"]);
@@ -79,6 +81,7 @@
                     {
                         Protocol = Protocol.Sftp,
                         HostName = ConfigurationSettings.AppSettings["HOST-SFTP"],
+                        PortNumber = int.Parse(ConfigurationSettings.AppSettings["PORT-SFTP"]),
                         UserName = ConfigurationSettings.AppSettings["USER-SFTP"],
                         Password = ConfigurationSettings.AppSettings["PASSWORD-SFTP"],
                         SshHostKeyFingerprint = ConfigurationSettings.AppSettings["KEY-SFTP"]
@@ -99,7 +102,7 @@
                         transferResult.Check();
                     }
 
-                    Task.Run(() => File.Delete(destinationFileName));
+                    Task.Run(() => { try { File.Delete(destinationFileName); } catch (Exception) { } });
                     break;
                 }
                 catch (Exception e)
