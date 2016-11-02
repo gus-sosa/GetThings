@@ -1,19 +1,16 @@
-﻿using GetThins.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using WinSCP;
-
-namespace GetThings.Notifier
+﻿namespace GetThings.Notifier
 {
+    using Infrastructure;
+    using System;
+    using System.Configuration;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Mail;
+    using System.Threading.Tasks;
+    using WinSCP;
+
     public class EmailNotifier : INotifier
     {
         class RemoteDirInfo

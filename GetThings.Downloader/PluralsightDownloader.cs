@@ -1,13 +1,9 @@
-﻿using GetThins.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GetThings.Downloader
+﻿namespace GetThings.Downloader
 {
+    using Infrastructure;
+    using System;
+    using System.Diagnostics;
+
     public class PluralsightDownloader : IDownloader
     {
         public bool CanDownloadResource(string resource)
