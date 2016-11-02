@@ -1,15 +1,14 @@
-﻿using Arguments;
-using GetThins.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Practices.Unity;
-
-namespace GetThings.Downloader
+﻿namespace GetThings.Downloader
 {
+    using Arguments;
+    using GetThins.Infrastructure;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.Practices.Unity;
+
     class Program
     {
         static void Main(string[] args)

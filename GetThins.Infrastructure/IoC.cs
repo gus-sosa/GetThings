@@ -1,12 +1,8 @@
-﻿using Microsoft.Practices.Unity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GetThins.Infrastructure
+﻿namespace GetThins.Infrastructure
 {
+    using Microsoft.Practices.Unity;
+    using System;
+
     public class IoC
     {
         private static Lazy<IUnityContainer> container = new Lazy<IUnityContainer>(() =>
