@@ -22,13 +22,13 @@
             public string Password { get; set; }
 
             [Option('d', "pathDirectory", HelpText = "Directory where the resources will be downloaded")]
-            public string PathDirectory { get; set; } = AppDomain.CurrentDomain.BaseDirectory;
+            public string PathDirectory { get; set; } = AppDomain.CurrentDomain.BaseDirectory + "download\\";
 
             [Option('t', "pathTempDirectory", HelpText = "Temp Directory. This should be a place where the application can create files.")]
-            public string PathTempDirectory { get; set; } = AppDomain.CurrentDomain.BaseDirectory;
+            public string PathTempDirectory { get; set; } = AppDomain.CurrentDomain.BaseDirectory + "download\\";
 
             [Option('i', "DirFileInput", HelpText = "The path of the input file")]
-            public string DirFileInput { get; set; } = AppDomain.CurrentDomain.BaseDirectory + "\\input.txt";
+            public string DirFileInput { get; set; } = AppDomain.CurrentDomain.BaseDirectory + "download\\input.txt";
 
             [Option('r', "retry", HelpText = "Number of times for trying to download a resource.", DefaultValue = 10)]
             public int Retry { get; set; }

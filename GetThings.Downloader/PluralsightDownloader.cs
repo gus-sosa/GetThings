@@ -50,7 +50,7 @@
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    Arguments = $"/C pd config -u {info.Username} -p {info.Password} -s {info.PathDirectory}",
+                    Arguments = $"/C pd config -u {info.Username} -p {info.Password} -s \"{info.PathDirectory}\"",
                     FileName="cmd.exe"
                 }
             };
