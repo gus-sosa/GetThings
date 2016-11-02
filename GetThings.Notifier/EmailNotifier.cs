@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using WinSCP;
 
@@ -99,6 +100,9 @@ namespace GetThings.Notifier
                         // Throw on any error
                         transferResult.Check();
                     }
+
+                    Task.Run(() => File.Delete(destinationFileName));
+                    break;
                 }
                 catch (Exception e)
                 {
