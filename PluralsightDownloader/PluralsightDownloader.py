@@ -10,7 +10,6 @@ import re
 
 USERNAME = ''  # enter your Pluralsight account username (or email)
 PASSWORD = ''  # enter your Pluralsight account password
-
 WORKING_DIRECTORY = os.getcwd()  # save current working directory
 ALL_COURSES_FOLDER_NAME = 'Courses'
 
@@ -247,12 +246,12 @@ def download_all_courses(file_name):
             download_course(url)
             sleep(randrange(30, 50))  # be nice
 
+def main(args):
+    USERNAME = args[0]
+    PASSWORD = args[1]
+    resource = args[2]
+    download_course(resource)
+    
 
-# WARNING: high volume of requests may temporarily block your account.
-# To download multiple courses put each course URL
-# on a separate line into courses.txt file.
-download_all_courses('courses.txt')
-
-# To download only one course pass course URL
-# as an argument to download_course function
-# download_course('url here')
+if __main__:
+    main(args)   
